@@ -45,12 +45,9 @@ while True:
                 turn(-50, 0.5)
                 drive(-80,0.5)
                 state = SEARCHING
-            print('-------')
-            print(m)
-            print(x)
         else:
             print "Can't see anything."
-            turn(-15, 0.1)
+            turn(-20, 0.1)
             drive(-30,0.2)
             time.sleep(0.2)
 
@@ -77,16 +74,12 @@ while True:
                     state = SEARCHING
                 else:
                     print "Aww, I'm not close enough."
-                #exit()
-
             elif -15 <= m.rot_y <= 15:
                 print "Ah, that'll do."
                 drive(50, 0.5)
-
             elif m.rot_y < -15:
                 print "Left a bit..."
                 turn(-10, 0.5)
-
             elif m.rot_y > 15:
                 print "Right a bit..."
                 turn (10, 0.5)
