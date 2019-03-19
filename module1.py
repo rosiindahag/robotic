@@ -6,10 +6,10 @@ SEARCHING, DRIVING = range(2)
 
 R = Robot()
 
-MARKER_TOKENS = (MARKER_TOKEN, MARKER_TOKEN_A, MARKER_TOKEN_B, MARKER_TOKEN_C)
-
-token_filter = lambda m: m.info.marker_type in MARKER_TOKENS
-
+TOKENS = [1,2,3,4,5,6,7,8]
+#ARENA = [23,2,9,16,27,4,14,18]
+token_filter = lambda m: m.info.marker_type in MARKER_TOKEN_A
+#arena_filter = lambda m: m.info.marker_type in ARENA
 def drive(speed, seconds):
     R.motors[0].m0.power = speed
     R.motors[0].m1.power = speed
@@ -23,26 +23,67 @@ def turn(speed, seconds):
     time.sleep(seconds)
     R.motors[0].m0.power = 0
     R.motors[0].m1.power = 0
-tokens = filter(token_filter, R.see())
-m = tokens[0]
-i = 1
+
 state = SEARCHING
+i = 0
+
+print(R.see())
+#print(tk)
+#print(token_filter2)
 while True:
-    tokens = filter(token_filter, R.see())
     if state == SEARCHING:
-        if m.info.offset == i:
-            drive(100,1.4)
-            if R.grab():
-                turn(25, 2.4)
-                print("staaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakkkkkkkkkk")
-                drive(100, 1)
-                if R.release():
-                    turn(-25,1.2)
-                    print("ed")
-            i = i+1
-            state = DRIVING
+        print "Searching..."
+        tokens = filter(token_filter, R.see())
+        #arena = filter(t
+        if len(tokens) > 0:
+            m = tokens[0]
+            print "Token sighted. {0} is {1}m away, bearing {2} degrees." \
+                  .format(m.info.offset, m.dist, m.rot_y)
+            print(i)
+            if m.info.offset == TOKENS[i]:
+                #turn(50,0.6)
+                state = DRIVING
+            else:
+                turn(20,0.6)
+                state = SEARCHING
+            print('-------')
+            print(m)
+            
         else:
-            state = SEARCHING
+            print "Can't see anything."
+            turn(15, 0.3)
+            time.sleep(0.2)
+
     elif state == DRIVING:
-        turn(25,1.2)
-        state = SEARCHING
+        print "Aligning..."
+        tokens = filter(token_filter, R.see())
+        if len(tokens) == 0:
+            state = SEARCHING
+        else:
+            m = tokens[0]
+            if m.dist < 0.4:
+                print "Found it!"
+                drive(m.dist*100,0.5)
+                if R.grab():
+                    print "Gotcha!"
+                    turn(50, 0.5)
+                    drive(60, 1)
+                    R.release()
+                    i = i+1                    
+                    drive(-80, 0.5)
+                    state = SEARCHING
+                else:
+                    print "Aww, I'm not close enough."
+                #exit()
+
+            elif -10 <= m.rot_y <= 10:
+                print "Ah, that'll do."
+                drive(50, 0.5)
+
+            elif m.rot_y < -10:
+                print "Left a bit..."
+                turn(-12.5, 0.5)
+
+            elif m.rot_y > 10:
+                print "Right a bit..."
+                turn (12.5, 0.5)
