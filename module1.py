@@ -41,10 +41,10 @@ while True:
                   .format(m.info.offset, m.dist, m.rot_y)
             print(i)
             if m.info.offset == TOKENS[i]:
-                #turn(50,0.6)
                 state = DRIVING
             else:
                 turn(20,0.6)
+                turn(-40, 0.6)
                 state = SEARCHING
             print('-------')
             print(m)
@@ -52,6 +52,7 @@ while True:
         else:
             print "Can't see anything."
             turn(15, 0.3)
+            drive(-25,0.3)
             time.sleep(0.2)
 
     elif state == DRIVING:
@@ -66,24 +67,25 @@ while True:
                 drive(m.dist*100,0.5)
                 if R.grab():
                     print "Gotcha!"
-                    turn(50, 0.5)
+                    turn(-20, 0.5)
                     drive(60, 1)
                     R.release()
                     i = i+1                    
                     drive(-80, 0.5)
+                    turn(-25,0.5)
                     state = SEARCHING
                 else:
                     print "Aww, I'm not close enough."
                 #exit()
 
-            elif -10 <= m.rot_y <= 10:
+            elif -12 <= m.rot_y <= 12:
                 print "Ah, that'll do."
                 drive(50, 0.5)
 
-            elif m.rot_y < -10:
+            elif m.rot_y < -12:
                 print "Left a bit..."
-                turn(-12.5, 0.5)
+                turn(-10, 0.5)
 
-            elif m.rot_y > 10:
+            elif m.rot_y > 12:
                 print "Right a bit..."
-                turn (12.5, 0.5)
+                turn (10, 0.5)
